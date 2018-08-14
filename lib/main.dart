@@ -12,9 +12,9 @@ class MyApp extends StatefulWidget{
   _State createState() => new _State();
 }
 
-class _State extends State<MyApp>{
-  static const url = "";
 
+class _State extends State<MyApp>{
+  Map<String,dynamic> cafeteria = null;
   Future<String> getData() async{
     var response = await http.get(
       Uri.encodeFull(url),
@@ -22,19 +22,19 @@ class _State extends State<MyApp>{
         "Accept" : "application/json"
       }
     );
-    Map<String,dynamic> cafeteria = json.decode(response.body);
-    print('food place: ${cafeteria['The Vista at Shaw']['Breakfast']}');
+    this.setState((){
+      this.cafeteria = json.decode(response.body);
+    });
 
+    //FoodLocation foodLocation = new FoodLocation("The Vista at Shaw", cafeteria);
+
+
+    // print('food place: ${cafeteria['The Vista at Shaw']['Lunch']}');
+    return json.decode(response.body);
   }
 
-  List<bool> _data = new List<bool>();
   @override
   void initState() {
-    setState((){
-      for(int i =0; i < 10; i++){
-        _data.add(false);
-      }
-    });
     getData();
   }
 
@@ -45,16 +45,12 @@ class _State extends State<MyApp>{
           title: new Text("Menu"),
         ),
         body: new ListView.builder(
-          itemCount: _data.length,
+          itemCount: cafeteria == null ? 0 : cafeteria.length,
           itemBuilder: (BuildContext context, int index){
             return new Card(
               child: new Container(
                 padding: new EdgeInsets.all(32.0),
-                child: new Column(
-                    children: <Widget>[
-                      new Text("This is item ${index}"),
-                    ]
-                ),
+                child: new Text(cafeteria.keys.elementAt(index))
               )
             );
           },
