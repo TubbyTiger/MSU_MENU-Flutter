@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'FoodLocation.dart';
 void main() {
   runApp(new MaterialApp(
     home: new MyApp(),
@@ -50,7 +51,8 @@ class _State extends State<MyApp>{
           itemBuilder: (BuildContext context, int index){
             return new GestureDetector(
               onTap: (){
-                print("${cafeteria.keys.elementAt(index)}");
+               // print("${cafeteria.keys.elementAt(index)}");
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FoodLocation(cafeteria.keys.elementAt(index),cafeteria)));
               },
               child: new Card(
                 child: new Container(
