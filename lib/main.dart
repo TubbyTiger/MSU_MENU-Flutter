@@ -48,13 +48,13 @@ class _State extends State<MyApp>{
         body: new ListView.builder(
           itemCount: cafeteria == null ? 0 : cafeteria.length,
           itemBuilder: (BuildContext context, int index){
-            return new Card(
-              child: new Container(
-                padding: new EdgeInsets.all(32.0),
-                child: new GestureDetector(
-                  onTap: (){
-                    print("${index.toString()} tapped");
-                  },
+            return new GestureDetector(
+              onTap: (){
+                print("${cafeteria.keys.elementAt(index)}");
+              },
+              child: new Card(
+                child: new Container(
+                  padding: new EdgeInsets.all(32.0),
                   child: new Text(cafeteria.keys.elementAt(index))
                 )
               )
