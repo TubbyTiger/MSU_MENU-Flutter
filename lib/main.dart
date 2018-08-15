@@ -12,6 +12,7 @@ class MyApp extends StatefulWidget{
   _State createState() => new _State();
 }
 
+const url = "";
 
 class _State extends State<MyApp>{
   Map<String,dynamic> cafeteria = null;
@@ -50,7 +51,12 @@ class _State extends State<MyApp>{
             return new Card(
               child: new Container(
                 padding: new EdgeInsets.all(32.0),
-                child: new Text(cafeteria.keys.elementAt(index))
+                child: new GestureDetector(
+                  onTap: (){
+                    print("${index.toString()} tapped");
+                  },
+                  child: new Text(cafeteria.keys.elementAt(index))
+                )
               )
             );
           },
