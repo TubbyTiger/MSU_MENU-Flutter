@@ -1,79 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'dart:convert';
-class FoodLocation extends StatelessWidget{
+class FoodLocation extends StatefulWidget{
+
+  @override
+  _MyTabbedPageState createState() => new _MyTabbedPageState(_meals,_name);
+
+  Map<String,dynamic> _meals;
   String _name;
-  List<String> _breakfast;
-  Map<String,dynamic> _breakfastMap;
-  List<String> _lunch;
-  Map<String,dynamic> _lunchMap;
-  List<String> _dinner;
-  Map<String,dynamic> _dinnerMap;
-  List<String> _lateNight;
-  Map<String,dynamic> _lateNightMap;
   FoodLocation(String name,Map<String,dynamic> cafeteria){
     this._name = name;
-    _breakfastMap = json.decode(json.encode(cafeteria[name]["Breakfast"]));
-    _lunchMap = json.decode(json.encode(cafeteria[name]["Lunch"]));
-    _dinnerMap = json.decode(json.encode(cafeteria[name]["Dinner"]));
-    _lateNightMap = json.decode(json.encode(cafeteria[name]["Late Night"]));
+    _meals = cafeteria[_name];
+  }
+}
 
+class _MyTabbedPageState extends State<FoodLocation> with SingleTickerProviderStateMixin{
 
-    //  Map<String,dynamic> cafeteria = json.decode(response.body);
-   // print('food place: ${cafeteria['The Vista at Shaw']['Lunch']}');
+ List<Tab> _myTabs = new List<Tab>();
+  String _name;
+  TabController _tabController;
+  //Comparator function
+   int compare(String a, String b){
+     List<String> order = ["Breakfast","Lunch","Dinner","Late Night"];
+     return order.indexOf(a) - order.indexOf(b);
+   }
+
+  _MyTabbedPageState(Map<String,dynamic> meals,String name){
+    this._meals = meals;
+    this._name = name;
+    List<String> mealTimes = meals.keys.toList();
+    mealTimes.sort((a, b) => compare(a,b));
+    for(String mealTime in mealTimes){
+      _myTabs.add(new Tab(text: mealTime));
+    }
+  }
+  Map<String,dynamic> _meals;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(vsync: this, length: _myTabs.length);
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
+  String getMeals(String mealTime){
+    String display = "";
+    Map<String,dynamic> meal = json.decode(json.encode(_meals[mealTime]));
+    for(String mealPlace in meal.keys){
+      display += mealPlace + "\n";
+      display += meal[mealPlace].toString() + "\n\n\n";
+    }
+    return display;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold (
-        appBar: new AppBar(
-          title: new Text(_name),
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(_name),
+        bottom: new TabBar(
+          controller: _tabController,
+          tabs: _myTabs,
         ),
-        body: new Column(
-          children: <Widget>[
-            //Breakfast, Lunch, Dinner titles
-            new Row(
-              children: <Widget>[
-                new Expanded(
-                  child: new Text('Breakfast', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Lunch', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Dinner', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Late Night', textAlign: TextAlign.center),
-                )
-              ],
-            )
-            ,
-            new Row(
-              children: <Widget>[
-                new Expanded(
-                  child: new Text('Breakfast', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Lunch', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Dinner', textAlign: TextAlign.center),
-                ),
-                new Expanded(
-                  child: new Text('Late Night', textAlign: TextAlign.center),
-                )
-              ],
-            )
-            ,
-          ],
-        )
-
-
+      ),
+      body: new TabBarView(
+        controller: _tabController,
+        children: _myTabs.map((Tab tab) {
+          return new Center(child: new SingleChildScrollView(
+            child: new Text(getMeals(tab.text)),
+          ));
+        }).toList(),
+      ),
     );
   }
-
-
 }

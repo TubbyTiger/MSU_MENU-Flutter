@@ -27,11 +27,6 @@ class _State extends State<MyApp>{
     this.setState((){
       this.cafeteria = json.decode(response.body);
     });
-
-    //FoodLocation foodLocation = new FoodLocation("The Vista at Shaw", cafeteria);
-
-
-    // print('food place: ${cafeteria['The Vista at Shaw']['Lunch']}');
     return json.decode(response.body);
   }
 
@@ -51,7 +46,6 @@ class _State extends State<MyApp>{
           itemBuilder: (BuildContext context, int index){
             return new GestureDetector(
               onTap: (){
-               // print("${cafeteria.keys.elementAt(index)}");
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FoodLocation(cafeteria.keys.elementAt(index),cafeteria)));
               },
               child: new Card(
