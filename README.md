@@ -1,4 +1,4 @@
-# MShttps://github.com/TubbyTiger/MSU_MENU-Flutter/issuesU_MENU-implemented using Flutter
+# MSU_MENU-implemented using Flutter
 Mainly for practice in Flutter development.
 NOTE:: Probably going to scratch this project.
 ### Pulls json from https://github.com/TubbyTiger/MSU_MENU-api
