@@ -17,34 +17,53 @@ class MyApp extends StatefulWidget{
 }
 
 final url = "";
-
 class _State extends State<MyApp>{
   SplayTreeMap<String,dynamic> cafeteria;
+
+  Map<String,String> order;
+  SharedPreferences prefs;
+
   Future<String> getData() async{
+    prefs = await SharedPreferences.getInstance();
     var response = await http.get(
       Uri.encodeFull(url),
       headers: {
         "Accept" : "application/json"
       }
     );
-    this.setState((){
-      this.cafeteria = new SplayTreeMap<String,dynamic>.from(json.decode(response.body));
-//      this.cafeteria = new SplayTreeMap<String,dynamic>.from(json.decode(response.body), (a,b) => compare(a,b));
 
+
+    this.setState(()  {
+      this.cafeteria = new SplayTreeMap<String,dynamic>.from(json.decode(response.body), (a,b)  =>  _compare(a,b));
+    //  this.cafeteria = new Map<String,dynamic>.  .from(json.decode(response.body));
+    //  print(cafeteria.toString());
     });
 
     return json.decode(response.body);
   }
-
-
-
-  int _compare(a,b){
-    return 1;
+  int _compare(String a,String b) {
+    var locB = _orderFoodLocationTime(b);
+    var locA = _orderFoodLocationTime(a);
+    if(locB - locA == 0){
+      return 1;
+    }
+    return _orderFoodLocationTime(b) - _orderFoodLocationTime(a);
   }
 
 
+   int _orderFoodLocationTime(String location){
+      var time = prefs.getInt(location);
+      if (time == null) {
+        return 0;
+      }
+      return time;
+  }
+
+
+
+
   @override
-  void initState() {
+  void initState(){
     getData();
   }
 

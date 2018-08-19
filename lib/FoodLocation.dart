@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,9 +10,9 @@ class FoodLocation extends StatefulWidget{
 
   Map<String,dynamic> _meals;
   String _name;
-  FoodLocation(String name,Map<String,dynamic> cafeteria){
+  FoodLocation(String name,SplayTreeMap<String,dynamic> cafeteria){
     this._name = name;
-    _meals = cafeteria[_name];
+    _meals = json.decode(json.encode(cafeteria))[_name];
   }
 }
 
