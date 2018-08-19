@@ -1,8 +1,11 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'FoodLocation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(new MaterialApp(
     home: new MyApp(),
@@ -13,10 +16,10 @@ class MyApp extends StatefulWidget{
   _State createState() => new _State();
 }
 
-const url = "";
+final url = "";
 
 class _State extends State<MyApp>{
-  Map<String,dynamic> cafeteria = null;
+  SplayTreeMap<String,dynamic> cafeteria;
   Future<String> getData() async{
     var response = await http.get(
       Uri.encodeFull(url),
@@ -25,10 +28,20 @@ class _State extends State<MyApp>{
       }
     );
     this.setState((){
-      this.cafeteria = json.decode(response.body);
+      this.cafeteria = new SplayTreeMap<String,dynamic>.from(json.decode(response.body));
+//      this.cafeteria = new SplayTreeMap<String,dynamic>.from(json.decode(response.body), (a,b) => compare(a,b));
+
     });
+
     return json.decode(response.body);
   }
+
+
+
+  int _compare(a,b){
+    return 1;
+  }
+
 
   @override
   void initState() {

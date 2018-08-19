@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 class FoodLocation extends StatefulWidget{
 
   @override
@@ -19,7 +20,7 @@ class _MyTabbedPageState extends State<FoodLocation> with SingleTickerProviderSt
   String _name;
   TabController _tabController;
   //Comparator function
-   int compare(String a, String b){
+   int _compare(String a, String b){
      List<String> order = ["Breakfast","Lunch","Dinner","Late Night"];
      return order.indexOf(a) - order.indexOf(b);
    }
@@ -27,12 +28,21 @@ class _MyTabbedPageState extends State<FoodLocation> with SingleTickerProviderSt
   _MyTabbedPageState(Map<String,dynamic> meals,String name){
     this._meals = meals;
     this._name = name;
+    _addName();
     List<String> mealTimes = meals.keys.toList();
-    mealTimes.sort((a, b) => compare(a,b));
+    mealTimes.sort((a, b) => _compare(a,b));
     for(String mealTime in mealTimes){
       _myTabs.add(new Tab(text: mealTime));
     }
   }
+
+  _addName() async{
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+     var time = new DateTime.now().millisecondsSinceEpoch;
+     print("$_name clicked on time: $time");
+     await prefs.setInt(_name, time);
+  }
+
   Map<String,dynamic> _meals;
   @override
   void initState() {
@@ -45,7 +55,7 @@ class _MyTabbedPageState extends State<FoodLocation> with SingleTickerProviderSt
     super.dispose();
   }
 
-  String getMeals(String mealTime){
+  String _getMeals(String mealTime){
     String display = "";
     Map<String,dynamic> meal = json.decode(json.encode(_meals[mealTime]));
     for(String mealPlace in meal.keys){
@@ -69,7 +79,7 @@ class _MyTabbedPageState extends State<FoodLocation> with SingleTickerProviderSt
         controller: _tabController,
         children: _myTabs.map((Tab tab) {
           return new Center(child: new SingleChildScrollView(
-            child: new Text(getMeals(tab.text)),
+            child: new Text(_getMeals(tab.text)),
           ));
         }).toList(),
       ),
